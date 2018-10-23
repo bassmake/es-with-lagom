@@ -17,11 +17,13 @@ TODO: Some nice ES diagram with core components
 
 ---
 
-CQRS
+### CQRS
+
+- Command Query Responsibility Segregation
 
 +++
 
-TODO: Some nice CQRS diagram with core components
+![cqrs](https://martinfowler.com/bliki/images/cqrs/cqrs.png)
 
 ---
 
@@ -29,7 +31,7 @@ TODO: Some nice CQRS diagram with core components
 
 - Open source framework for building reactive microservice systems in Java or Scala. |
 - BUT |
-- It has nice persistence model based on ES and CQRS |
+- It has also nice persistence model based on ES and CQRS |
 
 ---
 
