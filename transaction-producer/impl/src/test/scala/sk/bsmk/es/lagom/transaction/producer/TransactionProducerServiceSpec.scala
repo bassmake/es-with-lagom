@@ -1,10 +1,12 @@
 package sk.bsmk.es.lagom.transaction.producer
 
+import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.testkit.scaladsl.TestSink
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
+
 import scala.concurrent.duration._
 
 class TransactionProducerServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
@@ -18,6 +20,7 @@ class TransactionProducerServiceSpec extends AsyncWordSpec with Matchers with Be
   private lazy val client = server.serviceClient.implement[TransactionProducerService]
 
   private implicit lazy val materializer: Materializer = server.materializer
+  private implicit lazy val system: ActorSystem = server.actorSystem
 
   "The Transaction Producer" should {
 
@@ -27,13 +30,19 @@ class TransactionProducerServiceSpec extends AsyncWordSpec with Matchers with Be
       }
     }
 
-    val interval = 100
-
-    "tick transaction" in {
+    "tick transaction via stream" in {
+      val interval = 100
       client.tickTransactions(interval).invoke().map { output =>
-        val probe = output.runWith(TestSink.probe(server.actorSystem))
+        val probe = output.runWith(TestSink.probe)
         probe.requestNext((2 * interval).milliseconds).value should be > 0
       }
+    }
+
+    "publish transactions" in {
+      val source = client.transactionsTopic().subscribe.atMostOnceSource
+      source.runWith(TestSink.probe)
+          .request(1)
+          .expectNext.value should be > 0
     }
 
   }
