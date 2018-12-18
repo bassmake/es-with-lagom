@@ -20,7 +20,7 @@ trait TransactionProducerService extends Service {
     named("transaction-producer")
       .withCalls(
         pathCall("/random-transaction", produceTransaction _),
-        pathCall("/tick-transactions", tickTransactions _)
+        pathCall("/tick-transactions/:interval", tickTransactions _)
       )
       .withTopics(
         topic(TransactionProducerService.TOPIC_NAME, transactionsTopic())
