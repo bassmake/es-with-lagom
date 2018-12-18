@@ -5,32 +5,7 @@ scalaVersion := "2.12.7"
 lazy val `root` = (project in file("."))
   .aggregate(
     `transaction-producer`,
-    `api`,
-    `impl`
-  )
-
-lazy val `transaction-producer-api` = (project in file("transaction-producer/api"))
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      lagomScaladslApi
-    )
-  )
-
-
-lazy val `transaction-producer-impl` = (project in file("transaction-producer/impl"))
-  .settings(
-    commonSettings,
-    libraryDependencies ++= Seq(
-      lagomScaladslServer,
-      lagomScaladslDevMode,
-      lagomScaladslPersistenceCassandra,
-      lagomScaladslKafkaBroker,
-      Dependencies.macwire
-    )
-  )
-  .dependsOn(
-    `transaction-producer-api`
+    `customer-transactions`
   )
 
 lazy val `transaction-producer` = (project in file("transaction-producer"))
@@ -38,27 +13,75 @@ lazy val `transaction-producer` = (project in file("transaction-producer"))
     `transaction-producer-api`,
     `transaction-producer-impl`
   )
-  
 
-lazy val `api` = (project in file("api"))
+lazy val `transaction-producer-api` = (project in file("transaction-producer/api"))
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      lagomLogback,
       lagomScaladslApi
     )
   )
 
-lazy val `impl` = (project in file("impl"))
+lazy val `transaction-producer-impl` = (project in file("transaction-producer/impl"))
+  .enablePlugins(LagomScala)
+  .settings(lagomForkedTestSettings: _*)
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      lagomLogback,
+      lagomScaladslServer,
+      lagomScaladslDevMode,
       lagomScaladslPersistenceCassandra,
-      lagomScaladslPubSub,
+      lagomScaladslKafkaBroker,
+      Dependencies.macwire,
+
+      lagomScaladslTestKit,
+      Dependencies.scalaTest % Test,
+      Dependencies.pegdown % Test
     )
   )
   .dependsOn(
-    `api`
+    `transaction-producer-api`
   )
+
+lazy val `customer-transactions` = (project in file("customer-transactions"))
+  .aggregate(
+    `customer-transactions-api`,
+    `customer-transactions-impl`
+  )
+
+lazy val `customer-transactions-api` = (project in file("customer-transactions/api"))
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      lagomLogback,
+      lagomScaladslApi
+    )
+  )
+
+lazy val `customer-transactions-impl` = (project in file("customer-transactions/impl"))
+  .enablePlugins(LagomScala)
+  .settings(lagomForkedTestSettings: _*)
+  .settings(
+    commonSettings,
+    libraryDependencies ++= Seq(
+      lagomLogback,
+      lagomScaladslServer,
+      lagomScaladslDevMode,
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslKafkaClient,
+      Dependencies.macwire,
+
+      lagomScaladslTestKit,
+      Dependencies.scalaTest % Test,
+      Dependencies.pegdown % Test
+    )
+  )
+  .dependsOn(
+    `transaction-producer-api`
+  )
+
 
 val commonSettings =
 //  commonSmlBuildSettings ++

@@ -1,6 +1,7 @@
 package sk.bsmk.es.lagom.transaction.producer
 
 import akka.stream.Materializer
+import com.lightbend.lagom.scaladsl.api.Descriptor
 import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
@@ -39,4 +40,7 @@ class TransactionProducerApplicationLoader extends LagomApplicationLoader {
 
   override def load(context: LagomApplicationContext): LagomApplication =
     new TransactionProducerApplication(context) with LagomDevModeComponents
+
+  override def describeService: Option[Descriptor] =
+    Some(readDescriptor[TransactionProducerService])
 }
