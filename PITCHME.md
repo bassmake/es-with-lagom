@@ -37,9 +37,49 @@ TODO: Some nice ES diagram with core components
 
 ### Events
 
+- Describe what happened in the system
+- Persisted
+- Changing state
+- No validations when applying
+- Cannot be changed!
+- System must be able to load all events from the beginning (migrations)
+- Snapshots - state persisted at some time for efficiency
+
++++
+
+### AggregateEvent
+
+```scala
+sealed trait CustomerEvent extends AggregateEvent[CustomerEvent] {
+  override def aggregateTag: AggregateEventTagger[CustomerEvent] = CustomerEvent.Tag
+}
+
+object CustomerEvent {
+  val NumShards = 20
+  val Tag: AggregateEventShards[CustomerEvent] = AggregateEventTag.sharded[CustomerEvent](NumShards)
+}
+```
+@[1](extend `AggregateEvent` trait)
+@[2,7](aggregateTag)
+@[6](number of shards)
+
 ---
 
 ### Commands
+
+- What should be done 
+- Input to the system
+- Validations are applied while processing
+- After success events are stored
+- State is not changed!
+
++++
+
+### ReplyType
+
+```scala
+sealed trait CustomerCommand[R] extends ReplyType[R]
+```
 
 ---
 
