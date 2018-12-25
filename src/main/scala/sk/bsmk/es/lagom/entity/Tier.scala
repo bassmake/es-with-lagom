@@ -22,4 +22,13 @@ object Tier extends Enum[Tier] with PlayJsonEnum[Tier] {
     override val threshold = 1000
   }
 
+  def compute(points: Int): Tier =
+    if (points >= Gold.threshold) {
+      Gold
+    } else if (points >= Silver.threshold) {
+      Silver
+    } else {
+      None
+    }
+
 }

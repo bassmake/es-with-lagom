@@ -15,13 +15,12 @@ object TransactionProducer {
     .tick(1.second, 1.second, NotUsed)
     .map(_ => generateTransaction())
 
-  private def generateTransaction(): Transaction = {
+  private def generateTransaction(): Transaction =
     Transaction(
       UUID.randomUUID(),
       "Alice",
       100,
       Instant.now()
     )
-  }
 
 }

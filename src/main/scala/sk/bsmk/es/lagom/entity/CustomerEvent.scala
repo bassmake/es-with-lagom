@@ -1,13 +1,15 @@
 package sk.bsmk.es.lagom.entity
 
+import java.time.Instant
+
 import com.lightbend.lagom.scaladsl.persistence.{
   AggregateEvent,
   AggregateEventShards,
   AggregateEventTag,
   AggregateEventTagger
 }
-import com.lightbend.lagom.scaladsl.playjson.JsonSerializer
 import play.api.libs.json.{Format, Json}
+import sk.bsmk.es.lagom.producer.Transaction
 
 sealed trait CustomerEvent extends AggregateEvent[CustomerEvent] {
   override def aggregateTag: AggregateEventTagger[CustomerEvent] =
@@ -20,12 +22,15 @@ object CustomerEvent {
     AggregateEventTag.sharded[CustomerEvent](NumShards)
 }
 
-case object CustomerCreated extends CustomerEvent {
-  implicit val format: Format[CustomerCreated.type] =
-    JsonSerializer.emptySingletonFormat(CustomerCreated)
+final case class FirstTransactionReceived(receivedAt: Instant)
+    extends CustomerEvent
+
+object FirstTransactionReceived {
+  implicit val format: Format[FirstTransactionReceived] = Json.format
 }
 
-final case class PointsAdded(added: Int) extends CustomerEvent
+final case class PointsAdded(added: Int, transaction: Transaction)
+    extends CustomerEvent
 
 object PointsAdded {
   implicit val format: Format[PointsAdded] = Json.format

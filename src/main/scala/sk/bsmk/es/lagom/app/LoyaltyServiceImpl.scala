@@ -11,8 +11,7 @@ import scala.concurrent.duration._
 
 class LoyaltyServiceImpl extends LoyaltyService {
 
-  override def customers
-    : ServiceCall[NotUsed, Source[CustomerDetail, NotUsed]] = ServiceCall { _ =>
+  override def customers: ServiceCall[NotUsed, Source[CustomerDetail, NotUsed]] = ServiceCall { _ =>
     val detail = CustomerDetail(
       "customer-one",
       100,
@@ -24,8 +23,7 @@ class LoyaltyServiceImpl extends LoyaltyService {
         .mapMaterializedValue(_ => NotUsed))
   }
 
-  override def customerDetail(
-      id: String): ServiceCall[NotUsed, CustomerDetail] = ServiceCall { _ =>
+  override def customerDetail(id: String): ServiceCall[NotUsed, CustomerDetail] = ServiceCall { _ =>
     val detail = CustomerDetail(
       id,
       100,
