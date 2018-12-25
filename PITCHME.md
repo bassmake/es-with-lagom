@@ -10,6 +10,7 @@
 - Data for audit out of the box
 - Easier to reason about in complex systems
 - Higher complexity compared to CRUD in init phases
+- very similar to version control systems
 
 +++
 
@@ -47,16 +48,18 @@ TODO: Some nice ES diagram with core components
 
 +++
 
-### AggregateEvent
+### Events in Lagom
 
 ```scala
 sealed trait CustomerEvent extends AggregateEvent[CustomerEvent] {
-  override def aggregateTag: AggregateEventTagger[CustomerEvent] = CustomerEvent.Tag
+  override def aggregateTag: AggregateEventTagger[CustomerEvent] 
+    = CustomerEvent.Tag
 }
 
 object CustomerEvent {
   val NumShards = 20
-  val Tag: AggregateEventShards[CustomerEvent] = AggregateEventTag.sharded[CustomerEvent](NumShards)
+  val Tag: AggregateEventShards[CustomerEvent]
+    = AggregateEventTag.sharded[CustomerEvent](NumShards)
 }
 ```
 @[1](extend `AggregateEvent` trait)
@@ -75,15 +78,45 @@ object CustomerEvent {
 
 +++
 
-### ReplyType
+### Commands in Lagom 
 
 ```scala
 sealed trait CustomerCommand[R] extends ReplyType[R]
 ```
 
+@[1](extend `ReplyType` trait where R specifies Reply)
+
 ---
 
-### PersistentEntity
+### Entity and state
+
+- 
+
++++
+
+### Entity in Lagom
+
+```scala
+class CustomerEntity extends PersistentEntity {
+  override type Event = CustomerEvent
+  override type Command = CustomerCommand[_]
+  override type State = CustomerState
+  override def initialState: CustomerState = CustomerState.Init
+```
+
+@[1](extend `PersistentEntity` trait)
+@[2](define type of events)
+@[3](define type of commands)
+@[4](define type of state)
+@[5](initial state, could be Option if needed)
+
++++
+
+### Behaviour in entity
+
+```scala
+
+```
 
 ---
 
