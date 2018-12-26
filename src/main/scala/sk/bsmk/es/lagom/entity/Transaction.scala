@@ -1,4 +1,4 @@
-package sk.bsmk.es.lagom.producer
+package sk.bsmk.es.lagom.entity
 
 import java.time.Instant
 import java.util.UUID

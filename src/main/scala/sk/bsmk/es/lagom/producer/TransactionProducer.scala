@@ -6,6 +6,7 @@ import java.util.UUID
 import akka.NotUsed
 import akka.actor.Cancellable
 import akka.stream.scaladsl.Source
+import sk.bsmk.es.lagom.entity.Transaction
 
 import scala.concurrent.duration._
 
