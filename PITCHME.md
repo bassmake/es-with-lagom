@@ -16,6 +16,8 @@
 
 TODO: Some nice ES diagram with core components
 
+@uml[style...](gitpitch/simple.puml)
+
 ---
 
 ### CQRS
