@@ -21,10 +21,10 @@ object CustomerEvent {
     AggregateEventTag.sharded[CustomerEvent](NumShards)
 }
 
-final case class FirstTransactionReceived(receivedAt: Instant) extends CustomerEvent
+final case class CustomerCreated(createdAt: Instant) extends CustomerEvent
 
-object FirstTransactionReceived {
-  implicit val format: Format[FirstTransactionReceived] = Json.format
+object CustomerCreated {
+  implicit val format: Format[CustomerCreated] = Json.format
 }
 
 final case class PointsAdded(added: Int, transaction: Transaction) extends CustomerEvent

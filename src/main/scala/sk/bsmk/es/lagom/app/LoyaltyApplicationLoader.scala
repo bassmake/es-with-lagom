@@ -5,6 +5,7 @@ import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.server.{LagomApplication, LagomApplicationContext, LagomApplicationLoader}
 
 class LoyaltyApplicationLoader extends LagomApplicationLoader {
+
   override def load(context: LagomApplicationContext): LagomApplication =
     new LoyaltyApplication(context) with LagomDevModeComponents
 

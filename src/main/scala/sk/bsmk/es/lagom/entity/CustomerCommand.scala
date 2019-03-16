@@ -8,16 +8,10 @@ import sk.bsmk.es.lagom.api.CustomerDetail
 
 sealed trait CustomerCommand[R] extends ReplyType[R]
 
-final case class ProcessTransaction(transaction: Transaction) extends CustomerCommand[Done]
+final case class AddPointsFromTransaction(transaction: Transaction) extends CustomerCommand[Done]
 
-object ProcessTransaction {
-  implicit val format: Format[ProcessTransaction] = Json.format
-}
-
-final case class SetTier(newTier: Tier) extends CustomerCommand[CustomerDetail]
-
-object SetTier {
-  implicit val format: Format[SetTier] = Json.format
+object AddPointsFromTransaction {
+  implicit val format: Format[AddPointsFromTransaction] = Json.format
 }
 
 case object GetDetail extends CustomerCommand[CustomerDetail] {

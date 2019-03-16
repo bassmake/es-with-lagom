@@ -2,9 +2,10 @@ package sk.bsmk.es.lagom.entity
 
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
+import com.typesafe.scalalogging.LazyLogging
 import sk.bsmk.es.lagom.api.CustomerDetail
 
-class CustomerEntity extends PersistentEntity {
+class CustomerEntity extends PersistentEntity with LazyLogging {
 
   override type Event = CustomerEvent
   override type Command = CustomerCommand[_]
@@ -14,7 +15,7 @@ class CustomerEntity extends PersistentEntity {
   override def behavior: Behavior =
     Actions()
       .onEvent {
-        case (FirstTransactionReceived(_), state) =>
+        case (CustomerCreated(_), state) =>
           state
         case (PointsAdded(pointsAdded, transaction), state) =>
           state.copy(
@@ -29,11 +30,11 @@ class CustomerEntity extends PersistentEntity {
       .onReadOnlyCommand[GetDetail.type, CustomerDetail] {
         case (GetDetail, ctx, state) => ctx.reply(detail(state))
       }
-      .onCommand[ProcessTransaction, Done] {
-        case (ProcessTransaction(transaction), ctx, state) =>
+      .onCommand[AddPointsFromTransaction, Done] {
+        case (AddPointsFromTransaction(transaction), ctx, state) =>
           val firsTransactionEvent =
-            state.transactions.headOption.fold(Option(FirstTransactionReceived(transaction.createdAt)))(_ =>
-              Option.empty[FirstTransactionReceived])
+            state.transactions.headOption.fold(Option(CustomerCreated(transaction.createdAt)))(_ =>
+              Option.empty[CustomerCreated])
 
           val pointsAdded = Some(PointsAdded(transaction.value, transaction))
           val tierChanged =
@@ -42,22 +43,15 @@ class CustomerEntity extends PersistentEntity {
               case newTier @ _         => Some(TierChanged(newTier))
             }
 
-          val events = Seq(firsTransactionEvent, pointsAdded, tierChanged).flatten
+          val events = Seq(firsTransactionEvent, pointsAdded, tierChanged).toList.flatten
+
+          logger.info(s"Events to store: $events")
+
           ctx.thenPersistAll(events: _*)(() => ctx.reply(Done))
-      }
-      .onCommand[SetTier, CustomerDetail] {
-        case (SetTier(newTier), ctx, state) if newTier == state.customer.tier =>
-          ctx.commandFailed(new IllegalArgumentException("Tier already set"))
-          ctx.done
-        case (SetTier(newTier), ctx, state) =>
-          val event = TierChanged(newTier)
-          ctx.thenPersist(event) { _ =>
-            ctx.reply(detail(state))
-          }
       }
 
   private def detail(state: State) = CustomerDetail(
-    name = entityId,
+    username = entityId,
     points = state.customer.points,
     tier = state.customer.tier
   )

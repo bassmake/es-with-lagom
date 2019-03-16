@@ -4,6 +4,8 @@ name := "es-with-lagom"
 version := "0.1"
 scalaVersion := "2.12.8"
 
+scalafmtOnCompile in ThisBuild := true
+
 lazy val `root` = (project in file("."))
   .enablePlugins(LagomScala)
   .settings(lagomForkedTestSettings: _*)
