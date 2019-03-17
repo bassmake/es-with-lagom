@@ -16,33 +16,16 @@
 
 TODO: Some nice ES diagram with core components
 
-![Alt text](https://g.gravizo.com/svg?
-  digraph G {
-    aize ="4,4";
-    main [shape=box];
-    main -> parse [weight=8];
-    parse -> execute;
-    main -> init [style=dotted];
-    main -> cleanup;
-    execute -> { make_string; printf}
-    init -> make_string;
-    edge [color=red];
-    main -> printf [style=bold,label="100 times"];
-    make_string [label="make a string"];
-    node [shape=box,style=filled,color=".7 .3 1.0"];
-    execute -> compare;
-  }
+![Event sourcing simplified](https://g.gravizo.com/svg?
+    @startuml
+    Command -> Entity: ask to do something
+    Entity -> Entity: validates, creates events\n(not stored yet)
+    Entity -> Journal: stores events
+    Entity -> Command: response
+    Entity -> Journal: ask for not applied events
+    Entity -> Entity: events are applied and state is changed
+    @enduml
 )
-
----
-
-### CQRS
-
-- Command Query Responsibility Segregation
-
-+++
-
-![cqrs](https://martinfowler.com/bliki/images/cqrs/cqrs.png)
 
 ---
 
