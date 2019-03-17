@@ -16,7 +16,7 @@ sealed trait CustomerEvent extends AggregateEvent[CustomerEvent] {
 }
 
 object CustomerEvent {
-  val NumShards = 20
+  val NumShards = 4
   val Tag: AggregateEventShards[CustomerEvent] =
     AggregateEventTag.sharded[CustomerEvent](NumShards)
 }
@@ -27,10 +27,16 @@ object CustomerCreated {
   implicit val format: Format[CustomerCreated] = Json.format
 }
 
-final case class PointsAdded(added: Int, transaction: Transaction) extends CustomerEvent
+final case class PointsAdded(added: Int) extends CustomerEvent
 
 object PointsAdded {
   implicit val format: Format[PointsAdded] = Json.format
+}
+
+final case class TransactionPerformed(transaction: Transaction) extends CustomerEvent
+
+object TransactionPerformed {
+  implicit val format: Format[TransactionPerformed] = Json.format
 }
 
 final case class TierChanged(newTier: Tier) extends CustomerEvent

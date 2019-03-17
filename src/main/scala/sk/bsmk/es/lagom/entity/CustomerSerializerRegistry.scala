@@ -9,6 +9,7 @@ object CustomerSerializerRegistry extends JsonSerializerRegistry {
     JsonSerializer[AddPointsFromTransaction],
     JsonSerializer[CustomerCreated],
     JsonSerializer[PointsAdded],
+    JsonSerializer[TransactionPerformed],
     JsonSerializer[TierChanged]
   )
 }

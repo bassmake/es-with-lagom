@@ -39,14 +39,18 @@ object TransactionProcessing {
     Transaction(
       UUID.randomUUID(),
       chooseUsername(),
-      Random.nextInt(10) + 10,
+      transactionValue(),
       Instant.now()
     )
-
-  private val usernames = List("Alice", "Bob", "Charlie", "Dave")
 
   private def chooseUsername(): String = {
     usernames(Random.nextInt(usernames.size))
   }
+
+  private val usernames = List("Alice")
+  private def transactionValue(): Int = 10
+
+//  private val usernames = List("Alice", "Bob", "Charlie", "Dave")
+//  private def transactionValue(): Int = Random.nextInt(10) + 10
 
 }

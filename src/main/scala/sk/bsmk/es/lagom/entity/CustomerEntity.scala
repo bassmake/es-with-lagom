@@ -4,6 +4,7 @@ import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 import com.typesafe.scalalogging.LazyLogging
 import sk.bsmk.es.lagom.api.CustomerDetail
+import scala.collection.mutable
 
 class CustomerEntity extends PersistentEntity with LazyLogging {
 
@@ -17,37 +18,45 @@ class CustomerEntity extends PersistentEntity with LazyLogging {
       .onEvent {
         case (CustomerCreated(_), state) =>
           state
-        case (PointsAdded(pointsAdded, transaction), state) =>
+        case (PointsAdded(pointsAdded), state) =>
           state.copy(
             customer = state.customer.copy(
               points = state.customer.points + pointsAdded
-            ),
+            )
+          )
+        case (TransactionPerformed(transaction), state) =>
+          state.copy(
             transactions = state.transactions :+ transaction
           )
         case (TierChanged(newTier), state) =>
           state.copy(customer = state.customer.copy(tier = newTier))
       }
-      .onReadOnlyCommand[GetDetail.type, CustomerDetail] {
-        case (GetDetail, ctx, state) => ctx.reply(detail(state))
-      }
       .onCommand[AddPointsFromTransaction, Done] {
+
+
+
         case (AddPointsFromTransaction(transaction), ctx, state) =>
-          val firsTransactionEvent =
-            state.transactions.headOption.fold(Option(CustomerCreated(transaction.createdAt)))(_ =>
-              Option.empty[CustomerCreated])
+          val events = mutable.Buffer[CustomerEvent]()
 
-          val pointsAdded = Some(PointsAdded(transaction.value, transaction))
-          val tierChanged =
-            Tier.compute(state.customer.points + transaction.value) match {
-              case state.customer.tier => None
-              case newTier @ _         => Some(TierChanged(newTier))
-            }
+          if (state.transactions.isEmpty) {
+            val event = CustomerCreated(transaction.createdAt)
+            events  += event
+          }
 
-          val events = Seq(firsTransactionEvent, pointsAdded, tierChanged).toList.flatten
+          events += PointsAdded(transaction.value)
+          events += TransactionPerformed(transaction)
+
+          val newTier = Tier.compute(state.customer.points + transaction.value)
+          if (newTier != state.customer.tier) {
+            events += TierChanged(newTier)
+          }
 
           logger.info(s"Events to store: $events")
 
           ctx.thenPersistAll(events: _*)(() => ctx.reply(Done))
+      }
+      .onReadOnlyCommand[GetDetail.type, CustomerDetail] {
+        case (GetDetail, ctx, state) => ctx.reply(detail(state))
       }
 
   private def detail(state: State) = CustomerDetail(
