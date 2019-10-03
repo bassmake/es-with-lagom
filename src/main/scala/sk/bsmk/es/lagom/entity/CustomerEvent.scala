@@ -33,7 +33,7 @@ object PointsAdded {
   implicit val format: Format[PointsAdded] = Json.format
 }
 
-final case class TransactionPerformed(transaction: Transaction) extends CustomerEvent
+final case class TransactionPerformed(transaction: PointTransaction) extends CustomerEvent
 
 object TransactionPerformed {
   implicit val format: Format[TransactionPerformed] = Json.format

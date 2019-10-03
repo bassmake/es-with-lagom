@@ -53,12 +53,12 @@ class CustomerEntity extends PersistentEntity with LazyLogging {
 
           ctx.thenPersistAll(events: _*)(() => ctx.reply(Done))
       }
-      .onReadOnlyCommand[GetDetail.type, CustomerDetail] {
-        case (GetDetail, ctx, state) => ctx.reply(detail(state))
+      .onReadOnlyCommand[GetCustomerState.type, CustomerDetail] {
+        case (GetCustomerState, ctx, state) => ctx.reply(detail(state))
       }
 
   private def detail(state: State) = CustomerDetail(
-    username = entityId,
+    customerId = entityId,
     points = state.customer.points,
     tier = state.customer.tier
   )

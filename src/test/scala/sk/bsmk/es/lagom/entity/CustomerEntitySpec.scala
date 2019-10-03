@@ -18,12 +18,14 @@ abstract class CustomerEntitySpec extends WordSpec with Matchers with BeforeAndA
   val customerName = "customer-zero"
 
   private def withDriver[T](
-      block: PersistentEntityTestDriver[CustomerCommand[_], CustomerEvent, CustomerState] => T): T = {
+      block: PersistentEntityTestDriver[CustomerCommand[_], CustomerEvent, CustomerState] => T
+  ): T = {
     val driver = new PersistentEntityTestDriver(system, new CustomerEntity, customerName)
     try {
       block(driver)
     } finally {
       driver.getAllIssues shouldBe empty
+      ()
     }
   }
 

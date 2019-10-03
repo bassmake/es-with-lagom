@@ -17,6 +17,6 @@ trait LoyaltyService extends Service {
 
   def customers: ServiceCall[NotUsed, Source[CustomerDetail, NotUsed]]
 
-  def customerDetail(id: String): ServiceCall[NotUsed, CustomerDetail]
+  def customerDetail(customerId: String): ServiceCall[NotUsed, CustomerDetail]
 
 }

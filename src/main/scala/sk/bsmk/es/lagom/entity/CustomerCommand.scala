@@ -8,13 +8,13 @@ import sk.bsmk.es.lagom.api.CustomerDetail
 
 sealed trait CustomerCommand[R] extends ReplyType[R]
 
-final case class AddPointsFromTransaction(transaction: Transaction) extends CustomerCommand[Done]
+final case class AddPointsFromTransaction(transaction: PointTransaction) extends CustomerCommand[Done]
 
 object AddPointsFromTransaction {
   implicit val format: Format[AddPointsFromTransaction] = Json.format
 }
 
-case object GetDetail extends CustomerCommand[CustomerDetail] {
-  implicit val format: Format[GetDetail.type] =
-    JsonSerializer.emptySingletonFormat(GetDetail)
+case object GetCustomerState extends CustomerCommand[CustomerDetail] {
+  implicit val format: Format[GetCustomerState.type] =
+    JsonSerializer.emptySingletonFormat(GetCustomerState)
 }

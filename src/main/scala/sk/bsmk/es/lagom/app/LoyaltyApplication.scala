@@ -23,8 +23,6 @@ abstract class LoyaltyApplication(context: LagomApplicationContext)
 
   persistentEntityRegistry.register(wire[CustomerEntity])
 
-  val transactionProcessing: TransactionProcessing = wire[TransactionProcessing]
-
   val monetaryTransactionService: MonetaryTransactionService = serviceClient.implement[MonetaryTransactionService]
 
 }

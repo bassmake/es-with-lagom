@@ -5,6 +5,8 @@ import com.lightbend.lagom.scaladsl.testkit.{ProducerStub, ProducerStubFactory, 
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.{Matchers, OptionValues, WordSpec}
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
+import org.scalatest.time.{Millis, Seconds, Span}
+import sk.bsmk.es.lagom.api.LoyaltyService
 import sk.bsmk.es.lagom.app.LoyaltyApplication
 import sk.bsmk.es.lagom.external.{MonetaryTransaction, MonetaryTransactionService, MonetaryTransactionServiceStub}
 
@@ -18,8 +20,8 @@ class LoyaltyApplicationSpec
 
   var monetaryTransactionsStub: ProducerStub[MonetaryTransaction] = _
 
-  "The AnotherService" should {
-    "publish updates on greetings message" in ServiceTest.withServer(ServiceTest.defaultSetup.withCassandra()) { ctx =>
+  private val server: ServiceTest.TestServer[LoyaltyApplication with LocalServiceLocator] =
+    ServiceTest.startServer(ServiceTest.defaultSetup.withCassandra()) { ctx =>
       new LoyaltyApplication(ctx) with LocalServiceLocator {
 
         val stubFactory = new ProducerStubFactory(actorSystem, materializer)
@@ -30,18 +32,33 @@ class LoyaltyApplicationSpec
         override val monetaryTransactionService: MonetaryTransactionService =
           new MonetaryTransactionServiceStub(monetaryTransactionsStub)
       }
-    } { server =>
+    }
+
+  private val client: LoyaltyService = server.serviceClient.implement[LoyaltyService]
+
+  override implicit val patienceConfig: PatienceConfig = PatienceConfig(
+    timeout = Span(2, Seconds),
+    interval = Span(150, Millis)
+  )
+
+  "The AnotherService" should {
+    "publish updates on greetings message" in {
+
+      val username = "Alice"
+
       monetaryTransactionsStub.send(
         MonetaryTransaction(
-          "someone",
+          username,
           3.4,
           "EUR"
-        ))
+        )
+      )
 
       eventually {
-        1 should ===(2)
+        whenReady(client.customerDetail(username).invoke()) { detail =>
+          detail.points should be(34)
+        }
       }
-
     }
   }
 
