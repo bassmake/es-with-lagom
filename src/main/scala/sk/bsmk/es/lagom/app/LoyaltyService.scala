@@ -11,7 +11,7 @@ trait LoyaltyService extends Service {
     named("loyalty")
       .withCalls(
         pathCall("/customers/:id", customerDetail _),
-        pathCall("/customer-changes", customers),
+        pathCall("/customer-changes", customers)
       )
       .withAutoAcl(true)
   }

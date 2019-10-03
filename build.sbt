@@ -2,16 +2,17 @@ import Dependencies._
 
 name := "es-with-lagom"
 version := "0.1"
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.10"
 
 scalafmtOnCompile in ThisBuild := true
 
-lazy val `root` = (project in file("."))
+lazy val `es-with-lagom` = (project in file("."))
   .enablePlugins(LagomScala)
-  .settings(lagomForkedTestSettings: _*)
+  .settings(lagomForkedTestSettings)
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
+      compilerPlugin("com.softwaremill.neme" %% "neme-plugin" % "0.0.4"),
       lagomLogback,
       lagomScaladslApi,
       lagomScaladslServer,
@@ -29,10 +30,11 @@ lazy val `root` = (project in file("."))
   )
 
 val commonSettings =
-//  commonSmlBuildSettings ++
-//    wartRemoverSettings ++
-//    ossPublishSettings ++
-  smlBuildSettings ++ Seq(
+  commonSmlBuildSettings ++
+    splainSettings ++
+    dependencyUpdatesSettings ++
+    acyclicSettings ++
+    Seq(
 //    wartremoverWarnings ++= Warts.allBut(Wart.Throw),
 //    wartremoverExcluded += baseDirectory.value / "src" / "test" / "scala",
     Test / fork := true,

@@ -2,15 +2,20 @@ import sbt._
 
 object Dependencies {
 
-  val scalaLoggingVersion = "3.9.2"
+  object Versions {
 
-  val macwireVersion = "2.3.1"
+    val scalaLoggingVersion = "3.9.2"
 
-  val enumeratumVersion = "1.5.14"
+    val macwireVersion = "2.3.1"
 
-  val fakerVersion = "0.17.2"
-  val scalaTestVersion = "3.0.5"
-  val pegdownVersion = "1.6.0"
+    val enumeratumVersion = "1.5.14"
+
+    val fakerVersion = "0.17.2"
+    val scalaTestVersion = "3.0.5"
+    val pegdownVersion = "1.6.0"
+  }
+
+  import Versions._
 
   // dependencies
   val macwire = "com.softwaremill.macwire" %% "macros" % macwireVersion % Provided

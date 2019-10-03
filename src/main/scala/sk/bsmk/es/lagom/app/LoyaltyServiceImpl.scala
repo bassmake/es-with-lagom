@@ -20,7 +20,8 @@ class LoyaltyServiceImpl extends LoyaltyService {
     Future.successful(
       Source
         .tick(1.second, 1.second, detail)
-        .mapMaterializedValue(_ => NotUsed))
+        .mapMaterializedValue(_ => NotUsed)
+    )
   }
 
   override def customerDetail(id: String): ServiceCall[NotUsed, CustomerDetail] = ServiceCall { _ =>

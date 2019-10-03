@@ -33,14 +33,12 @@ class CustomerEntity extends PersistentEntity with LazyLogging {
       }
       .onCommand[AddPointsFromTransaction, Done] {
 
-
-
         case (AddPointsFromTransaction(transaction), ctx, state) =>
           val events = mutable.Buffer[CustomerEvent]()
 
           if (state.transactions.isEmpty) {
             val event = CustomerCreated(transaction.createdAt)
-            events  += event
+            events += event
           }
 
           events += PointsAdded(transaction.value)
