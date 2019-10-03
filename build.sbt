@@ -16,14 +16,15 @@ lazy val `es-with-lagom` = (project in file("."))
       lagomLogback,
       lagomScaladslApi,
       lagomScaladslServer,
-      lagomScaladslCluster,
       lagomScaladslDevMode,
+      lagomScaladslKafkaClient,
       lagomScaladslPersistenceCassandra,
       scalaLogging,
       macwire,
       enumeratum,
 
       lagomScaladslTestKit,
+      lagomScaladslKafkaBroker % Test,
       scalaTest % Test,
       pegdown % Test
     )

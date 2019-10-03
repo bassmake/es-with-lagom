@@ -1,0 +1,54 @@
+<configuration>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>%highlight(%-5level) %green(%d) %logger - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="Console"/>
+    </root>
+
+    <logger name="play" level="info" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="akka" level="info" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="akka.stream.alpakka" level="debug" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="io.getquill" level="info" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="org.apache.cassandra" level="error" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="com.datastax.driver" level="error" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="com.datastax.driver.core.ControlConnection" level="off" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="com.datastax.driver.core.RequestHandler" level="error" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="org.apache.kafka" level="warn" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="sk.bsmk" level="debug" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+</configuration>

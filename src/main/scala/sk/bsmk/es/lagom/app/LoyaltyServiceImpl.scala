@@ -1,15 +1,27 @@
 package sk.bsmk.es.lagom.app
 
-import akka.NotUsed
-import akka.stream.scaladsl.Source
+import akka.{Done, NotUsed}
+import akka.stream.scaladsl.{Flow, Source}
 import com.lightbend.lagom.scaladsl.api.ServiceCall
-import sk.bsmk.es.lagom.api.CustomerDetail
+import com.typesafe.scalalogging.LazyLogging
+import sk.bsmk.es.lagom.api.{CustomerDetail, LoyaltyService}
 import sk.bsmk.es.lagom.entity.Tier
+import sk.bsmk.es.lagom.external.{MonetaryTransaction, MonetaryTransactionService}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class LoyaltyServiceImpl extends LoyaltyService {
+class LoyaltyServiceImpl(monetaryTransactionService: MonetaryTransactionService)
+    extends LoyaltyService
+    with LazyLogging {
+
+  monetaryTransactionService
+    .monetaryTransactionsTopic()
+    .subscribe
+    .atLeastOnce(Flow[MonetaryTransaction].map { transaction =>
+      logger.info(s"Received $transaction")
+      Done
+    })
 
   override def customers: ServiceCall[NotUsed, Source[CustomerDetail, NotUsed]] = ServiceCall { _ =>
     val detail = CustomerDetail(

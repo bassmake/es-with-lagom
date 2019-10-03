@@ -1,9 +1,8 @@
-package sk.bsmk.es.lagom.app
+package sk.bsmk.es.lagom.api
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 import com.lightbend.lagom.scaladsl.api.{Descriptor, Service, ServiceCall}
-import sk.bsmk.es.lagom.api.CustomerDetail
 
 trait LoyaltyService extends Service {
   override def descriptor: Descriptor = {
